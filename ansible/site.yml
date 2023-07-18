@@ -1,0 +1,17 @@
+- name: change the initial SSH access
+  hosts: hetzner_vps_INITIAL
+  gather_facts: false
+  remote_user: root
+  vars:
+    vps_host: "{{ hostvars['hetzner_vps'].ansible_host }}"
+    vps_port: "{{ hostvars['hetzner_vps'].ansible_port }}"
+    vps_user: "{{ hostvars['hetzner_vps'].ansible_user }}"
+
+  tasks:
+  - name: Check ansible user
+    command: echo {{ vps_user }}@{{ vps_host }} -p {{ vps_port }} OK
+    delegate_to: localhost
+    connection: local
+    changed_when: false
+    failed_when: "'OK' not in check_ansible_user.stdout"
+    register: "check_ansible_user"
