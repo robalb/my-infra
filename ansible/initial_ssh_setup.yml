@@ -1,0 +1,91 @@
+- name: change the initial SSH access
+  hosts: hetzner_vps_INITIAL
+  remote_user: root
+  vars:
+    ssh_key_filename: id_hetzner_al
+    new_user: al
+    new_ssh_port: 6477
+    # The name of ssh daemon
+    sshd: ssh
+    # Where is ssh config is located at
+    sshd_config: /etc/ssh/sshd_config
+
+  vars_prompt:
+    - name: new_user_password
+      prompt: Enter password for user {{ new_user }} (You will need this for sudo)
+      private: true
+      confirm: true
+      encrypt: sha512_crypt
+      salt_size: 7
+
+  tasks:
+    - name: generate SSH key, and set it locally "{{ssh_key_filename}}"
+      delegate_to: localhost
+      openssh_keypair:
+        path: "~/.ssh/{{ssh_key_filename}}"
+        type: "ed25519"
+        state: present
+        force: false
+    - name: Generate sudo group
+      community.general.sudoers:
+        name: sudo
+        group: sudo
+        state: present
+        nopassword: true
+        commands: ALL
+    - name: generate new {{ new_user }} user
+      user:
+        name: "{{ new_user }}"
+        shell: /bin/bash
+        groups: sudo
+        append: true
+        password: "{{ new_user_password }}"
+        update_password: on_create
+        state: present
+    - name: Add authorized key for {{ new_user }} user
+      ansible.posix.authorized_key:
+        user: "{{ new_user }}"
+        key: "{{ lookup('file', '~/.ssh/{{ ssh_key_filename }}.pub') }}"
+        state: "present"
+        exclusive: false
+    - name: Disable empty password login
+      lineinfile: 
+        dest: "{{ sshd_config }}" 
+        regexp: '^#?PermitEmptyPasswords' 
+        line: 'PermitEmptyPasswords no'
+
+    # point of no return, host hetzner_vps_INITIAL will be cut out
+
+    - name: Disable remote root login
+      lineinfile: 
+        dest: "{{ sshd_config }}" 
+        regexp: '^#?PermitRootLogin' 
+        line: 'PermitRootLogin no'
+    - name: Disable password login
+      lineinfile: 
+        dest: "{{ sshd_config }}" 
+        regexp: '^(#\s*)?PasswordAuthentication '
+        line: 'PasswordAuthentication no'
+    - name: change SSH port
+      lineinfile: 
+        dest: "{{ sshd_config }}" 
+        regexp: '^(#\s*)?Port 22'
+        line: "Port {{ new_ssh_port }}"
+    - name: Stop and Start ssh
+      service:
+        name: ssh
+        state: restarted
+
+# If this fails, You probably just locked yourself out :)
+
+- name: test the new ssh access
+  hosts: hetzner_vps
+  tasks:
+    - name: test sudo access
+      become: true
+      command: id -u
+      register: id_output
+    - assert:
+        that: id_output.stdout == '0'
+
+

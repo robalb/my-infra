@@ -1,49 +1,14 @@
-- name: change the initial SSH access
-  hosts: hetzner_vps_INITIAL
-  remote_user: root
-  vars:
-    ssh_key_filename: id_hetzner_al
-    new_user: al
-  vars_prompt:
-    - name: new_user_password
-      prompt: Enter password for user {{ new_user }} (You will need this for sudo)
-      private: true
-      confirm: true
-      encrypt: sha512_crypt
-      salt_size: 7
-
+- name: configure the personal vps
+  hosts: hetzner_vps
   tasks:
-    - name: generate SSH key, and set it locally "{{ssh_key_filename}}"
-      delegate_to: localhost
-      openssh_keypair:
-        path: "~/.ssh/{{ssh_key_filename}}"
-        type: "ed25519"
-        state: present
-        force: false
-    - name: Generate sudo group
-      community.general.sudoers:
-        name: sudo
-        group: sudo
-        state: present
-        nopassword: false
-        commands: ALL
-    - name: generate new {{ new_user }} user
-      user:
-        name: "{{ new_user }}"
-        shell: /bin/bash
-        groups: sudo
-        append: true
-        password: "{{ new_user_password }}"
-        update_password: on_create
-        state: present
-    - name: Add authorized key for {{ new_user }} user
-      ansible.posix.authorized_key:
-        user: "{{ new_user }}"
-        key: "{{ lookup('file', '~/.ssh/{{ ssh_key_filename }}.pub') }}"
-        state: "present"
-        exclusive: false
+    - name: test sudo access
+      become: true
+      command: id -u
+      register: id_output
+    - assert:
+        that: id_output.stdout == '0'
+
+  # mariadb http://youdidwhatwithtsql.com/simple-mariadb-deployment-ansible/2311/
 
 
-# - name: change the initial SSH access
-#   hosts: hetzner_vps_INITIAL
-#   remote_user: root
+

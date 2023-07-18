@@ -20,6 +20,18 @@ Test that the INITIAL machines are accessible
 ansible virtualmachines_INITIAL -m ping -i inventory.yml
 ```
 
+Run the initial ssh setup
+
+```bash
+ansible-playbook -i inventory.yml initial_ssh_setup.yml
+```
+
+Run the rest of the setup
+
+```bash
+ansible-playbook -i inventory.yml site.yml
+```
+
 ### Roadmap
 
 #### provisioning
@@ -79,3 +91,7 @@ the idea is that mariadb (an other future databases) will be installed outside o
 #### provisioning
 
 The ubuntu machine provisioning will be handled manually. I don't need fancy stuff
+
+#### references
+
+https://github.com/vitalk/ansible-secure-ssh
