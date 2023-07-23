@@ -1,0 +1,112 @@
+version: '3.3'
+
+services:
+  traefik:
+    image: "traefik:v2.10"
+    restart: unless-stopped
+    command:
+      - "--log.level=DEBUG"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--api=true"
+      - "--api.dashboard=true"
+    ports:
+      - "80:80"
+      - "443:443"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik-dashboard-http-router.tls=true"
+      - "traefik.http.routers.traefik-dashboard-http-router.tls.certresolver=myresolver"
+      - "traefik.http.routers.traefik-dashboard-http-router.entrypoints=websecure"
+      - "traefik.http.routers.traefik-dashboard-http-router.rule=Host(`traefik.halb.it`)"
+      - "traefik.http.routers.traefik-dashboard-http-router.service=api@internal"
+      - "traefik.docker.network=traefik-proxy"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./traefik/traefik.yml:/etc/traefik/traefik.yml"
+      # persistent data volumes
+      - "./data-traefik/letsencrypt:/letsencrypt"
+    networks:
+      - traefik-proxy
+
+
+  blog:
+    image: "nginx"
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.blog.rule=Host(`blog.halb.it`)"
+      - "traefik.http.routers.blog.entrypoints=websecure"
+      - "traefik.http.routers.blog.tls=true"
+      - "traefik.http.routers.blog.tls.certresolver=myresolver"
+    networks:
+      - traefik-proxy
+
+
+  grafana:
+    image: grafana/grafana:latest
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.grafana.rule=Host(`grafana.${BASE_DOMAIN}`)"
+      - "traefik.http.routers.grafana.entrypoints=websecure"
+      - "traefik.http.routers.grafana.tls=true"
+      - "traefik.http.routers.grafana.tls.certresolver=myresolver"
+    volumes:
+      - ./grafana/provisioning/:/etc/grafana/provisioning/
+      - grafana-data:/var/lib/grafana
+    environment:
+      GF_INSTALL_PLUGINS: grafana-piechart-panel
+    networks:
+      - traefik-proxy
+
+  prometheus:
+    image: prom/prometheus
+    restart: unless-stopped
+    user: root
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.size=500MB'
+      # - '--web.config.file=/etc/prometheus/web.yml'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.prometheus.rule=Host(`metrics.${BASE_DOMAIN}`)'
+      - 'traefik.http.routers.prometheus.entrypoints=websecure'
+      - 'traefik.http.routers.prometheus.tls=true'
+      - 'traefik.http.routers.prometheus.tls.certresolver=myresolver'
+    networks:
+      - traefik-proxy
+
+  node-exporter:
+    image: prom/node-exporter
+    restart: unless-stopped
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command: 
+      - '--path.procfs=/host/proc' 
+      - '--path.sysfs=/host/sys'
+      - --collector.filesystem.ignored-mount-points
+      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
+    # ports:
+    #   - 9100:9100
+    networks:
+      - traefik-proxy
+
+volumes:
+  grafana-data: {}
+  prometheus-data: {}
+
+
+networks:
+  traefik-proxy:
+    external: true

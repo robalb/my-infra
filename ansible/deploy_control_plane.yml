@@ -1,0 +1,17 @@
+- name: update a control-plane deployment
+  hosts: hetzner_vps
+  tasks:
+    - name: Copy docker compose control plane
+      ansible.posix.synchronize:
+        src: "{{ playbook_dir }}/../control-plane"
+        dest: /home/al/
+    - name: rerun docker compose
+      shell: cd /home/al/control-plane && docker compose up -d
+      register: output
+
+    - name: Show stdout
+      ansible.builtin.debug:
+        var: output.stdout_lines
+    - name: Show stderr
+      ansible.builtin.debug:
+        var: output.stderr_lines

@@ -2,6 +2,8 @@
 
 Infrastructure-as-code lab, hosting my personal projects
 
+control plane is a fork of https://github.com/vegasbrianc/prometheus/
+
 ## getting started
 
 Insall ansible
@@ -96,9 +98,4 @@ The ubuntu machine provisioning will be handled manually. I don't need fancy stu
 
 https://github.com/vitalk/ansible-secure-ssh
 
-#############################################################
-#                     Welcome to halb.it                    #
-#         All actions Will be monitored and recorded        #
-# Disconnect IMMEDIATELY if you are not an authorized user! #
-#############################################################
 

@@ -1,0 +1,12 @@
+- name: configure the personal vps
+  hosts: hetzner_vps
+  tasks:
+    - name: Update all packages to the latest version
+      apt:
+        name: "*"
+        update_cache: yes
+        state: latest
+    - name: Update distro
+      apt:
+      upgrade: dist    
+
