@@ -77,11 +77,12 @@ services:
       - '--web.console.libraries=/usr/share/prometheus/console_libraries'
       - '--web.console.templates=/usr/share/prometheus/consoles'
     labels:
-      - 'traefik.enable=true'
-      - 'traefik.http.routers.prometheus.rule=Host(`metrics.${BASE_DOMAIN}`)'
-      - 'traefik.http.routers.prometheus.entrypoints=websecure'
-      - 'traefik.http.routers.prometheus.tls=true'
-      - 'traefik.http.routers.prometheus.tls.certresolver=myresolver'
+      - 'traefik.enable=false'
+      # uncomment to expose prometheus to the world. This is not safe
+      # - 'traefik.http.routers.prometheus.rule=Host(`metrics.${BASE_DOMAIN}`)'
+      # - 'traefik.http.routers.prometheus.entrypoints=websecure'
+      # - 'traefik.http.routers.prometheus.tls=true'
+      # - 'traefik.http.routers.prometheus.tls.certresolver=myresolver'
     networks:
       - traefik-proxy
 
@@ -97,8 +98,6 @@ services:
       - '--path.sysfs=/host/sys'
       - --collector.filesystem.ignored-mount-points
       - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
-    # ports:
-    #   - 9100:9100
     networks:
       - traefik-proxy
 
