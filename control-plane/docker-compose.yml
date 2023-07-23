@@ -4,14 +4,6 @@ services:
   traefik:
     image: "traefik:v2.10"
     restart: unless-stopped
-    command:
-      - "--log.level=DEBUG"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.websecure.address=:443"
-      - "--api=true"
-      - "--api.dashboard=true"
     ports:
       - "80:80"
       - "443:443"
