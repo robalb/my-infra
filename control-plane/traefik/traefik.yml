@@ -18,7 +18,7 @@ providers:
     exposedByDefault: false
 
 log:
-  level: DEBUG
+  level: INFO
 
 api:
   dashboard: true
