@@ -95,3 +95,10 @@ The ubuntu machine provisioning will be handled manually. I don't need fancy stu
 #### references
 
 https://github.com/vitalk/ansible-secure-ssh
+
+#############################################################
+#                     Welcome to halb.it                    #
+#         All actions Will be monitored and recorded        #
+# Disconnect IMMEDIATELY if you are not an authorized user! #
+#############################################################
+

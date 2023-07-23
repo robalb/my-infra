@@ -3,12 +3,96 @@
   tasks:
     - name: test sudo access
       become: true
+      changed_when: False
       command: id -u
       register: id_output
     - assert:
         that: id_output.stdout == '0'
+    - name: install packets
+      become: true
+      apt:
+        update_cache: true
+        state: present
+        pkg:
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - gnupg-agent
+        - software-properties-common
+        - vim
+        - neovim
+        - htop
+        - haveged
+
+    # - name: Update all packages to the latest version
+    #   apt:
+    #     name: "*"
+    #     update_cache: yes
+    #     state: latest
+    # - name: Update distro
+    #   apt:
+    #   upgrade: dist    
+
+    # https://docs.docker.com/engine/install/ubuntu/#set-up-the-repository
+    - name: check if the docker official GPG key is installed
+      stat: 
+        path: /etc/apt/keyrings/docker.gpg
+      register: docker_gpg
+
+    - name: add docker's official GPG key
+      become: true
+      shell: |
+        sudo install -m 0755 -d /etc/apt/keyrings &&\
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg &&\
+        sudo chmod a+r /etc/apt/keyrings/docker.gpg
+      when: docker_gpg.stat.exists == false
+
+    - name: check if the docker repository is configured
+      stat: 
+        path: /etc/apt/sources.list.d/docker.list
+      register: docker_apt_repo
+
+    - name: set up the docker repository
+      become: true
+      shell: |
+        echo \
+          "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+          "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+          sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+      when: docker_apt_repo.stat.exists == false
+
+    - name: install docker
+      become: true
+      apt:
+        update_cache: true
+        state: present
+        pkg:
+        - docker-ce
+        - docker-ce-cli
+        - containerd.io
+        - docker-buildx-plugin
+        - docker-compose-plugin
+
+    - name: Ensure group "docker" exists
+      become: true
+      ansible.builtin.group:
+        name: docker
+        state: present
+
+    - name: Add the group docker to the al user
+      become: true
+      ansible.builtin.user:
+        name: al
+        groups: docker
+        append: yes
+
+  # roles:
+  #   - role: claranet.motd
+  #     become: true
+  #     motd_template: "{{ playbook_dir }}/files/motd_template"
 
   # mariadb http://youdidwhatwithtsql.com/simple-mariadb-deployment-ansible/2311/
+  # docker https://www.digitalocean.com/community/tutorials/how-to-use-ansible-to-install-and-set-up-docker-on-ubuntu-20-04
 
 
 
