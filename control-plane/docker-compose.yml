@@ -1,5 +1,15 @@
 version: '3.3'
 
+volumes:
+  grafana-data: {}
+  prometheus-data: {}
+
+networks:
+  traefik-proxy:
+    external: true
+  monitoring:
+    external: true
+
 services:
   traefik:
     image: "traefik:v2.10"
@@ -93,11 +103,3 @@ services:
     networks:
       - traefik-proxy
 
-volumes:
-  grafana-data: {}
-  prometheus-data: {}
-
-
-networks:
-  traefik-proxy:
-    external: true
