@@ -86,9 +86,6 @@
         groups: docker
         append: yes
 
-    - name: Create the monitoring docker network
-      docker_network:
-        name: monitoring
     - name: Create the traefik proxy docker network
       docker_network:
         name: traefik-proxy

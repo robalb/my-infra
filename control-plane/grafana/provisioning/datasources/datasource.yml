@@ -9,6 +9,14 @@ deleteDatasources:
 # list of datasources to insert/update depending
 # whats available in the database
 datasources:
+- name: Loki
+  type: loki
+  access: proxy 
+  orgId: 1
+  url: http://loki:3100
+  basicAuth: false
+  version: 1
+  editable: false
   # <string, required> name of the datasource. Required
 - name: Prometheus
   # <string, required> datasource type. Required

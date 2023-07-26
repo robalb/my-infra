@@ -98,4 +98,5 @@ The ubuntu machine provisioning will be handled manually. I don't need fancy stu
 
 https://github.com/vitalk/ansible-secure-ssh
 
+https://github.com/grafana/loki/issues/2361#issuecomment-1100472540
 
