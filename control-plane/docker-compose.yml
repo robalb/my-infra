@@ -109,6 +109,7 @@ services:
     command: -config.file=/etc/loki/local-config.yaml
     volumes:
       - loki-data:/loki
+      - ./loki/local-config.yml:/etc/loki/local-config.yaml
     networks:
       - traefik-proxy
 
