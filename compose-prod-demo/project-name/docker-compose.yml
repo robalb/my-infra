@@ -1,0 +1,23 @@
+version: '3.9'
+
+networks:
+  traefik-proxy:
+    external: true
+
+services:
+  nginx:
+    image: nginx:latest
+    restart: unless-stopped
+    expose:
+      - '80'
+    environment:
+      TEST: ${TEST}
+
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.blog-halb.rule=Host(`project.halb.it`)
+      - traefik.http.routers.blog-halb.entrypoints=websecure
+      - traefik.http.routers.blog-halb.tls=true
+      - traefik.http.routers.blog-halb.tls.certresolver=myresolver
+    networks:
+      - traefik-proxy

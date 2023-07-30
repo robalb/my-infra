@@ -104,6 +104,7 @@ services:
 
   loki:
     image: grafana/loki:2.8.0
+    restart: unless-stopped
     expose:
       - "3100"
     command: -config.file=/etc/loki/local-config.yaml
@@ -115,6 +116,7 @@ services:
 
   promtail:
     image: grafana/promtail:2.8.0
+    restart: unless-stopped
     volumes:
       - ./promtail/config.yml:/etc/promtail/config.yml
       - /var/run/docker.sock:/var/run/docker.sock

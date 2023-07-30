@@ -6,7 +6,7 @@ control plane is a fork of https://github.com/vegasbrianc/prometheus/
 
 ## getting started
 
-Insall ansible
+#### Install ansible
 
 ```bash
 python3 -m pip install --user ansible
@@ -16,22 +16,47 @@ Configure the machine ip in `inventory.yml`. You must set it both in
 `virtualmachines` and `virtualmachines_INITIAL`, which is the initial way
 ssh access is configured, that the first ansible playbook will change
 
-Test that the INITIAL machines are accessible
+#### Test that the INITIAL machines are accessible
 
 ```bash
 ansible virtualmachines_INITIAL -m ping -i inventory.yml
 ```
 
-Run the initial ssh setup
+#### Run the initial ssh setup
 
 ```bash
 ansible-playbook -i inventory.yml initial_ssh_setup.yml
 ```
 
-Run the rest of the setup
+#### Run the rest of the setup
 
 ```bash
-ansible-playbook -i inventory.yml site.yml
+ansible-playbook -i inventory.yml software_setup.yml
+```
+
+#### Log in into your docker registry
+
+(no reason to automate this, run this manually inside the vps)
+
+```bash
+docker login ghcr.io -u USERNAME
+```
+
+when prompted for a password, enter a classic ghcr token
+with `read:packages` permissions. For more info:
+
+https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry
+
+### add a service
+
+```
+    labels:
+      - 'traefik.enable=false'
+      - 'traefik.http.routers.XXX.rule=Host(`subdomain.halb.it`)'
+      - 'traefik.http.routers.XXX.entrypoints=websecure'
+      - 'traefik.http.routers.XXX.tls=true'
+      - 'traefik.http.routers.XXX.tls.certresolver=myresolver'
+
 ```
 
 ### Roadmap
