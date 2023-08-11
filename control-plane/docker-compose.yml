@@ -102,6 +102,19 @@ services:
     networks:
       - traefik-proxy
 
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.47.2
+    restart: unless-stopped
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    expose:
+      - '8080'
+    networks:
+      - traefik-proxy
+
   loki:
     image: grafana/loki:2.8.0
     restart: unless-stopped
