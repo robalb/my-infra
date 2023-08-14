@@ -32,7 +32,6 @@ services:
     networks:
       - traefik-proxy
 
-
   blog:
     image: "nginx"
     restart: unless-stopped
@@ -44,7 +43,6 @@ services:
       - "traefik.http.routers.blog.tls.certresolver=myresolver"
     networks:
       - traefik-proxy
-
 
   grafana:
     image: grafana/grafana:latest
