@@ -1,10 +1,10 @@
 virtualmachines:
   hosts:
     hetzner_vps_INITIAL:
-      ansible_host: 5.75.186.193
+      ansible_host: vps
       ansible_user: root
     hetzner_vps:
-      ansible_host: 5.75.186.193
+      ansible_host: vps
       ansible_user: al
       ansible_port: 6477
 

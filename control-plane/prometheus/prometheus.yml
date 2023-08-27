@@ -46,3 +46,12 @@ scrape_configs:
     scrape_interval: 15s
     static_configs:
       - targets: ['node-exporter:9100']
+
+  # Warning: this target is not part of the control plane
+  # TODO: remove all targets that are not part of the control plane.
+  # configure dynamic imports via tags for all projects outside the control plane
+  - job_name: 'sshesame'
+    scrape_interval: 30s
+    static_configs:
+      - targets: ['sshesame:9100']
+

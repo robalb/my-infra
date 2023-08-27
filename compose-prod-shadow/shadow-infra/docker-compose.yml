@@ -1,0 +1,42 @@
+version: '3.9'
+
+networks:
+  traefik-proxy:
+    external: true
+
+volumes:
+  sshesame-data: {}
+
+services:
+  shadow-nginx:
+    image: nginx:latest
+    restart: unless-stopped
+    expose:
+      - '80'
+    environment:
+      TEST: ${TEST}
+    volumes:
+      - ./sshesame.yml:/sshesame.yml
+
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.shadow-web.rule=Host(`shadow.halb.it`)
+      - traefik.http.routers.shadow-web.entrypoints=websecure
+      - traefik.http.routers.shadow-web.tls=true
+      - traefik.http.routers.shadow-web.tls.certresolver=myresolver
+    networks:
+      - traefik-proxy
+
+  sshesame:
+    image: ghcr.io/jaksi/sshesame:v0.0.27
+    ports:
+      - "22:2022"
+    expose:
+      - "9100"
+    volumes:
+      - sshesame-data:/data
+      - ./sshesame.yml:/sshesame.yml
+    command: /sshesame -config /sshesame.yml -data_dir /data
+    networks:
+      - traefik-proxy
+
