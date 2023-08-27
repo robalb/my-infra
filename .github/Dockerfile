@@ -9,7 +9,7 @@
 FROM traefik:v2.10
 RUN echo traefik:v2.10
  
-FROM nginx
+FROM nginx:1.0.0
 RUN echo nginx
  
 FROM grafana/grafana:latest
