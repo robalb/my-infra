@@ -9,3 +9,5 @@ updates:
     directory: "/.github/" # Location of package manifests
     schedule:
       interval: "weekly"
+    # Only require security updates and exclude version updates
+    open-pull-requests-limit: 0
