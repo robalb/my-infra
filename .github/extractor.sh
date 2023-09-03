@@ -26,6 +26,7 @@ cat << EOF > Dockerfile
 EOF
 
 for image in $images; do
+    echo "found": $image"
     echo "FROM $image" >> Dockerfile
     echo "RUN echo $image" >> Dockerfile
     echo " " >> Dockerfile

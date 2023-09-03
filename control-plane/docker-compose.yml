@@ -33,7 +33,7 @@ services:
       - traefik-proxy
 
   blog:
-    image: "nginx:1.9.6"
+    image: "nginx:1.9.7"
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
