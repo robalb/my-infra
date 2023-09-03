@@ -1,5 +1,4 @@
 version: '3.3'
-#a
 
 volumes:
   grafana-data: {}
@@ -34,7 +33,7 @@ services:
       - traefik-proxy
 
   blog:
-    image: "nginx"
+    image: "nginx:1.9.5"
     restart: unless-stopped
     labels:
       - "traefik.enable=true"

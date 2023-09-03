@@ -12,9 +12,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 3
 
       - name: extract dependencies, put them in a fake Dockerfile dependabot will understand
-        run: 'cd .github && bash ./extractor.sh ../control-plane/docker-compose.sh'
+        run: 'cd .github && bash ./extractor.sh ../control-plane/docker-compose.yml'
 
       - name: Check if the Dockerfile changed after the extractor run
         id: check-changes
