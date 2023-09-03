@@ -1,0 +1,30 @@
+name: File Change Workflow
+
+on:
+  push:
+    paths:
+      - control-plane/docker-compose.yml
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: extract dependencies, put them in a fake Dockerfile dependabot will understand
+        run: 'cd .github && bash ./extractor.sh ../control-plane/docker-compose.sh'
+
+      - name: Check if the Dockerfile changed after the extractor run
+        id: check-changes
+        run: |
+          if [ -n "$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '.github/Dockerfile')" ]; then
+            echo "FILE_CHANGED=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit & Push changes
+        if: steps.check-changes.outputs.FILE_CHANGED == 'true'
+        uses: actions-js/push@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}

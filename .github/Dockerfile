@@ -3,13 +3,13 @@
 # This hack enables dependabot alerts for docker-compose files,
 # which right now are not supported
 #
-# Last update: dom 27 ago 2023, 17:16:49, CEST
+# Last update: dom 3 set 2023, 13:13:44, CEST
 # images extracted from ../control-plane/docker-compose.yml
 
 FROM traefik:v2.10
 RUN echo traefik:v2.10
  
-FROM nginx:1.0.0
+FROM nginx
 RUN echo nginx
  
 FROM grafana/grafana:latest
