@@ -49,6 +49,17 @@ https://docs.github.com/en/packages/working-with-a-github-packages-registry/work
 
 ### add a service
 
+Once the control plane is up and running, you can add your projects to the vps.
+
+TODO: write bash script to add to repository.
+  usage:
+     deploy.sh init (asks you questions, generates the compose-deploy folder)
+     deploy.sh push 
+     deploy.sh up
+     deploy.sh down
+     deploy.sh rollout
+     deploy.sh deploy (push+rollout)
+
 ```
     labels:
       - 'traefik.enable=false'
@@ -60,6 +71,17 @@ https://docs.github.com/en/packages/working-with-a-github-packages-registry/work
 ```
 
 ### Roadmap
+
+document and create project structure:
+
+    ansible       scripts for provisioning the vps
+    control-plane shared ingress and observability stack
+    deploy        build files for the deploy script you
+     |            can add to your project repo
+     L deploy.sh  the script
+     L template/  the template it will download from github when you run deploy init
+
+create deploy sh
 
 #### provisioning
 
