@@ -103,7 +103,7 @@ services:
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.47.2
     restart: unless-stopped
-    #https://github.com/google/cadvisor/issues/2523#issuecomment-785094428
+    # https://github.com/google/cadvisor/issues/2523#issuecomment-785094428
     command:
       - '-housekeeping_interval=10s'
       - '-docker_only=true'
