@@ -26,7 +26,7 @@ jobs:
           fi
 
       - name: Commit & Push changes
-        if: steps.check-changes.outputs.FILE_CHANGED == 'true'
+        # if: steps.check-changes.outputs.FILE_CHANGED == 'true'
         uses: actions-js/push@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
