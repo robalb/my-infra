@@ -24,7 +24,7 @@ RUN echo prom/node-exporter
 FROM gcr.io/cadvisor/cadvisor:v0.47.2
 RUN echo gcr.io/cadvisor/cadvisor:v0.47.2
  
-FROM grafana/loki:2.8.0
+FROM grafana/loki:2.8.4
 RUN echo grafana/loki:2.8.0
  
 FROM grafana/promtail:2.8.0
