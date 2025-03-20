@@ -36,6 +36,11 @@ scrape_configs:
     static_configs:
       - targets: ['traefik:8082']
 
+  - job_name: 'morsechat'
+    scrape_interval: 30s
+    static_configs:
+      - targets: ['morse:8081']
+
   - job_name: 'cadvisor'
     scrape_interval: 30s
     static_configs:
@@ -43,6 +48,6 @@ scrape_configs:
 
   - job_name: 'node-exporter'
     # Override the global default and scrape targets from this job every 5 seconds.
-    scrape_interval: 15s
+    scrape_interval: 30s
     static_configs:
       - targets: ['node-exporter:9100']

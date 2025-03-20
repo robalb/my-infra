@@ -1,5 +1,5 @@
 - name: update a control-plane deployment
-  hosts: hetzner_vps
+  hosts: all
   tasks:
     - name: Copy docker compose control plane
       ansible.posix.synchronize:
