@@ -15,10 +15,10 @@
       }
     ]
   },
+  "description": "",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 10,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -538,8 +538,8 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "morse chat Copy",
+  "title": "morse chat",
   "uid": "bcd680a9-1009-4202-8b1c-c9455c2e1b7a",
-  "version": 3,
+  "version": 4,
   "weekStart": ""
 }
